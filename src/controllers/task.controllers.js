@@ -13,11 +13,24 @@ export const getTareas = async (req, res) => {
   }
 };
 
-export const getTareaById = async (req, res) => {
-  const {id} = req.params;
+export const getTareaByUserId = async (req, res) => {
+  const {userid} = req.params;
   try {
-    const query = `SELECT * FROM tarea WHERE id = ?`;
-    conexion.query(query, [id], function (error, results, fields) {
+    const query = `SELECT * FROM tarea WHERE usuario_id = ?`;
+    conexion.query(query, [userid], function (error, results, fields) {
+      if (error) res.status(500).json({ message: error });
+      res.json(results);
+    });
+  } catch (error) {
+    res.send({ status: "error", error: "error" });
+  }
+};
+
+export const getTareaById = async (req, res) => {
+  const {userid, id} = req.params;
+  try {
+    const query = `SELECT * FROM tarea WHERE id = ? AND usuario_id = ?`;
+    conexion.query(query, [id, userid], function (error, results, fields) {
       if (error) res.status(500).json({ message: error });
       res.json(results);
     });

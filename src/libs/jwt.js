@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const PRIVATE_KEY = "clavesecretaparajwt";
+const PRIVATE_KEY = "clavesecretaparajwt"; // modificar
 
 export const generateToken = (usuario) => {
   const token = jwt.sign({ usuario }, PRIVATE_KEY, { expiresIn: "24h" });
