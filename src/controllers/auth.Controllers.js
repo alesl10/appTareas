@@ -14,22 +14,22 @@ export const getUsuarios = async (req, res) => {
 };
 
 export const addUsuario = async (req, res) => {
-  const { nombre, apellido, usuario, password, email } = req.body;
+  const { nombre, apellido, usuario, contraseña, email } = req.body;
 
-  if ((!nombre, !apellido, !usuario, !password, !email))
+  if ((!nombre, !apellido, !usuario, !contraseña, !email))
     res.status(400).send(["Datos incompletos"]);
 
   try {
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(contraseña, 10);
 
     const user = {
       nombre,
       apellido,
       usuario,
-      password: passwordHash,
+      contraseña: passwordHash,
       email,
     };
-    const query = `INSERT INTO usuario (nombre, apellido, usuario, password, email)
+    const query = `INSERT INTO usuario (nombre, apellido, usuario, contraseña, email)
 VALUES (?,?,?,?,?)`;
 
     conexion.query(
@@ -48,16 +48,16 @@ VALUES (?,?,?,?,?)`;
       }
     );
   } catch (error) {
-    console.log(error);
-    res.send({ status: "error", error: "error" });
+    // console.log(error); 
+    throw error
   }
 };
 
 
 export const login = async (req, res) => {
-  const { password, email } = req.body;
+  const { contraseña, email } = req.body;
 
-  if (!password || !email) {
+  if (!contraseña || !email) {
     return res.status(400).send(["Datos incompletos"]);
   }
 
@@ -76,9 +76,9 @@ export const login = async (req, res) => {
       const user = results[0];
 
       // Comparar la contraseña
-      const isMatch = await bcrypt.compare(password, user.password);
+      const isMatch = await bcrypt.compare(contraseña, user.contraseña);
       if (!isMatch) {
-        return res.status(400).json({ message: "Contraseña incorrecta", password:password,userPass:user.password });
+        return res.status(400).json({ message: "Contraseña incorrecta", password:contraseña,userPass:user.password });
       }
 
       
@@ -86,7 +86,7 @@ export const login = async (req, res) => {
       res.cookie("token", token);
       return res
         .status(200)
-        .send({ status: "success", message: "login correcto", payload: token });
+        .json({ status: "success", message: "login correcto",data:user, payload: token });
     });
   } catch (error) {
     console.error("Error en el login:", error);

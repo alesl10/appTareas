@@ -85,7 +85,7 @@ export const deleteTareaById = async (req, res) => {
     const query = `DELETE FROM tarea WHERE id = ?`;
     conexion.query(query, [id], function (error, results, fields) {
       if (error) res.status(500).json({ message: error });
-      res.json({ message: "Tarea eliminada correctamente" });
+      res.json({data:results.insertId, message: "Tarea eliminada correctamente" });
     });
   } catch (error) {
     res.send({ status: "error", error: "error" });
