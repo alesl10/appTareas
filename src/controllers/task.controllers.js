@@ -40,24 +40,31 @@ export const getTareaById = async (req, res) => {
 };
 
 export const addTarea = async (req, res) => {
-  const { titulo, descripcion, usuario_id } = req.body;
+  const { titulo, descripcion, usuario_id, estado } = req.body;
 
-  if (!titulo || !descripcion || !usuario_id)
-    res.status(400).send(["Datos incompletos"]);
+  if (!titulo || !descripcion || !usuario_id) {
+    return res.status(400).send(["Datos incompletos"]);
+  }
+
   try {
-    const query = `INSERT INTO tarea (titulo,descripcion,usuario_id)
-        VALUES (?,?,?)`;
+    let query = `INSERT INTO tarea (titulo, descripcion, usuario_id`;
+    const values = [titulo, descripcion, usuario_id];
 
-    conexion.query(
-      query,
-      [titulo, descripcion, usuario_id],
-      function (error, results, fields) {
-        if (error) res.status(500).json({ message: error });
-        res.json({ message: "Tarea creada", data: results.insertId });
+    if (estado !== undefined) {
+      query += `, estado) VALUES (?, ?, ?, ?)`;
+      values.push(estado);
+    } else {
+      query += `) VALUES (?, ?, ?)`;
+    }
+
+    conexion.query(query, values, function (error, results, fields) {
+      if (error) {
+        return res.status(500).json({ message: error.message });
       }
-    );
+      res.json({ message: "Tarea creada", data: results.insertId });
+    });
   } catch (error) {
-    res.send({ status: "error", error: "error" });
+    res.status(500).send({ status: "error", error: error.message });
   }
 };
 
