@@ -1,8 +1,10 @@
-import mysql from 'mysql'
+import mysql from 'mysql2'
 
 export const conexion = mysql.createConnection({
-    host:'localhost',
+    host:'viaduct.proxy.rlwy.net',
     user:'root',
-    password:'',
-    database:'tareas_app'
+    password:'AbMwvjRFajGEUTtVgSKmErgZKCreWgeQ',
+    database:'railway',
+    port:52480,
+    connectTimeout: 10000
 });
